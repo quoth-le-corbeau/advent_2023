@@ -1,22 +1,22 @@
 import re
 from pathlib import Path
 
-from helpers import print_timed_results
+import helpers
 
 
 def sum_calibration_values(file_path: Path) -> int:
-    values = _parse_file(file=file_path)
-    return sum(values)
+    return find_and_sum_digits(file=file_path)
 
 
-def _parse_file(file: Path) -> list[int]:
+def find_and_sum_digits(file: Path) -> int:
     with open(file) as puzzle_input:
         lines = puzzle_input.readlines()
-        all_digits = []
+        all_calibration_values = []
         for line in lines:
-            print(line)
-            digits = re.findall(r"\d+", line)
-            print(digits)
+            all_digits = re.findall(r"[0-9]", line)
+            calibration_value = f"{all_digits[0]}{all_digits[-1]}"
+            all_calibration_values.append(int(calibration_value))
+        return sum(all_calibration_values)
 
 
-print_timed_results(day=1, solution_func=sum_calibration_values)
+helpers.print_timed_results(day=1, solution_func=sum_calibration_values)
