@@ -19,4 +19,6 @@ def find_and_sum_digits(file: Path) -> int:
         return sum(all_calibration_values)
 
 
-helpers.print_timed_results(day=1, solution_func=sum_calibration_values)
+helpers.print_timed_results(
+    day=1, solution_func=sum_calibration_values, test_path_extension="eg1.txt"
+)
