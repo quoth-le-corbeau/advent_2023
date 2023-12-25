@@ -29,4 +29,4 @@ def _find_highest_for_colour(cubes_by_colour: list[str]) -> int:
     return max([int(entry.split()[0]) for entry in cubes_by_colour])
 
 
-helpers.print_timed_results(day=2, solution_func=get_minimum_cube_powers)
+helpers.print_timed_results(solution_func=get_minimum_cube_powers)

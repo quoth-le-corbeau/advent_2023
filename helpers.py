@@ -2,12 +2,9 @@ import os
 import time
 
 
-def print_timed_results(
-    day: int, solution_func: callable, test_path_extension: str = "eg.txt"
-):
-    path_route = os.path.basename("day" + str(day) + "/")
-    test_path = path_route + test_path_extension
-    real_path = path_route + "input.txt"
+def print_timed_results(solution_func: callable, test_path_extension: str = "eg.txt"):
+    test_path = test_path_extension
+    real_path = "input.txt"
 
     start = time.perf_counter()
     print(solution_func(test_path))

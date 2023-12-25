@@ -60,4 +60,4 @@ def _get_part_numbers_by_coordinates(
     return part_numbers
 
 
-helpers.print_timed_results(day=2, solution_func=get_all_gear_ratios)
+helpers.print_timed_results(solution_func=get_all_gear_ratios)

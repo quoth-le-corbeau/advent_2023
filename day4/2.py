@@ -27,4 +27,4 @@ def _get_scratchcard_copies(file: os.path):
         return card_copies
 
 
-helpers.print_timed_results(day=2, solution_func=get_total_scratchcards)
+helpers.print_timed_results(solution_func=get_total_scratchcards)

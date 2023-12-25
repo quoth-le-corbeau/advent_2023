@@ -39,4 +39,4 @@ def _is_game_impossible(cubes_by_colour: list[str], max_for_colour: int):
     return any(int(entry.split()[0]) > max_for_colour for entry in cubes_by_colour)
 
 
-helpers.print_timed_results(day=2, solution_func=get_possible_games)
+helpers.print_timed_results(solution_func=get_possible_games)

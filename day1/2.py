@@ -30,4 +30,4 @@ def _convert_digit(string: str) -> int:
         return SPELLED_DIGITS.index(string) + 1
 
 
-helpers.print_timed_results(day=2, solution_func=sum_calibration_values)
+helpers.print_timed_results(solution_func=sum_calibration_values)

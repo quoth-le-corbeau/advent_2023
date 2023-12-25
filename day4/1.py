@@ -22,4 +22,4 @@ def _get_scratchcard_points(file: os.path) -> int:
         return score
 
 
-helpers.print_timed_results(day=1, solution_func=get_scratchcard_points)
+helpers.print_timed_results(solution_func=get_scratchcard_points)

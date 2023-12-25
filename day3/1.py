@@ -43,4 +43,4 @@ def _get_all_part_numbers(file: os.path) -> list[int]:
         return all_part_numbers
 
 
-helpers.print_timed_results(day=1, solution_func=find_part_numbers)
+helpers.print_timed_results(solution_func=find_part_numbers)
