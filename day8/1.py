@@ -14,4 +14,4 @@ def _RENAME_FUNC(file: os.path):
         print(lines)
 
 
-helpers.print_timed_results(day=1, solution_func=RENAME_FUNC)
+helpers.print_timed_results(solution_func=RENAME_FUNC)

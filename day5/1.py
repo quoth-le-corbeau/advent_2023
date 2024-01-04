@@ -1,74 +1,83 @@
 import bisect
 import math
 import os
-import re
 from dataclasses import dataclass
 import helpers
 
 
 @dataclass(frozen=True)
 class MappingGuide:
-    source: int
     destination: int
+    source: int
     span: int
 
     def __lt__(self, other):
         return self.source < other.source
 
 
-def get_nearest_seed_location(file_path: os.path) -> int:
+def find_min_seed_location(file_path: os.path) -> int:
     seeds, mappings = _get_seeds_and_mappings(file=file_path)
-    locations = []
+    mapped_seeds = []
     for seed in seeds:
-        locations.append(_trace_through_mappings(seed=seed, mappings=mappings))
-    return min(locations)
+        mapped_seeds.append(_trace_through_mappings(seed=seed, mappings=mappings))
+    return min(mapped_seeds)
 
 
-def _trace_through_mappings(seed: int, mappings: list[dict[str, list[int]]]) -> int:
-    number_to_map = seed
+def _trace_through_mappings(seed: int, mappings: list[dict[str, list[float]]]) -> int:
+    mapped_seed = seed
     for mapping in mappings:
-        index = bisect.bisect_right(mapping["sources"], number_to_map) - 1
+        index = bisect.bisect_right(mapping["sources"], mapped_seed) - 1
         source = mapping["sources"][index]
         destination = mapping["destinations"][index]
-        mapped_value = number_to_map + destination - source
-        number_to_map = mapped_value
-    return number_to_map
+        mapped_seed = destination + mapped_seed - source
+    return mapped_seed
 
 
-def _get_seeds_and_mappings(
-    file: os.path,
-) -> tuple[list[int], list[dict[str, list[int]]]]:
+def _get_seeds_and_mappings(file: os.path):
     with open(file) as puzzle_input:
-        blocks = puzzle_input.read().split("\n\n")
-        seeds = list(map(int, re.findall(r"\d+", blocks[0])))
-        mappings = []
-        for block in blocks[1:]:
-            mapping = dict()
-            guides = block.split(":")[1].strip().splitlines()
-            sources = [-1]
-            destinations = [-1]
-            mapping_guides = []
-            for guide in guides:
-                destination = int(guide.split()[0])
-                source = int(guide.split()[1])
-                span = int(guide.split()[2])
-                mapping_guides.append(
-                    MappingGuide(source=source, destination=destination, span=span)
-                )
-            end_of_mapping = []
-            for mapping_guide in sorted(mapping_guides):
-                sources.append(mapping_guide.source)
-                destinations.append(mapping_guide.destination)
-                end_of_mapping.append(mapping_guide.source + mapping_guide.span)
-            end_of_guides = max(end_of_mapping)
-            sources.append(end_of_guides)
-            destinations.append(end_of_guides)
-            sources.append(math.inf)
-            destinations.append(math.inf)
-            mapping["sources"] = sources
-            mapping["destinations"] = destinations
+        seeds, *blocks = puzzle_input.read().split("\n\n")
+        seeds = list(map(int, seeds.split(":")[1].strip().split()))
+        mappings = list()
+        for block in blocks:
+            mapping = _get_full_mapping(block=block)
             mappings.append(mapping)
-        return seeds, mappings
+    return seeds, mappings
 
 
-helpers.print_timed_results(solution_func=get_nearest_seed_location)
+def _get_full_mapping(block: str) -> dict[str, list[int]]:
+    guides = block.split(":")[1].strip().splitlines()
+    mapping = dict()
+    sources = [-1]
+    destinations = [-1]
+    mapping_guides = []
+    for guide in guides:
+        destination, source, span = [int(val) for val in guide.split()]
+        mapping_guides.append(
+            MappingGuide(destination=destination, source=source, span=span)
+        )
+    mapping = _make_full_mapping(destinations, mapping, mapping_guides, sources)
+    return mapping
+
+
+def _make_full_mapping(
+    destinations: list[int],
+    mapping: dict[str, list[int]],
+    mapping_guides: list[MappingGuide],
+    sources: list[int],
+) -> dict[str, list[int]]:
+    end_of_mapping = []
+    for mapping_guide in sorted(mapping_guides):
+        sources.append(mapping_guide.source)
+        destinations.append(mapping_guide.destination)
+        end_of_mapping.append(mapping_guide.source + mapping_guide.span)
+    end_of_guides = max(end_of_mapping)
+    sources.append(end_of_guides)
+    destinations.append(end_of_guides)
+    sources.append(math.inf)
+    destinations.append(math.inf)
+    mapping["sources"] = sources
+    mapping["destinations"] = destinations
+    return mapping
+
+
+helpers.print_timed_results(solution_func=find_min_seed_location)
