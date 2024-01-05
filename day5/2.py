@@ -23,6 +23,7 @@ def find_min_seed_location(file_path: os.path) -> int:
             seed_range=seed_range, mappings=mappings
         )
     print(f"{mapped_seed_ranges=}")
+    # STILL FAILING !!!
     return min([mapped_seed_range[0] for mapped_seed_range in mapped_seed_ranges])
 
 
