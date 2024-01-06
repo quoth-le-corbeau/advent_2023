@@ -28,38 +28,51 @@ def find_min_seed_location(file_path: os.path) -> int:
 
 def _trace_range_through_mappings(
     seed_range: tuple[int, int], mappings: list[dict[str, list[float]]]
-) -> list[tuple[int, int]]:
-    mapped_ranges = set()
-    seed_ranges = []
+) -> list[tuple[float, float]]:
+    mapped_ranges = list()
+    sub_intervals = [seed_range]
     for mapping in mappings:
-        seed_ranges += _split_seed_ranges(mapping=mapping, seed_range=seed_range)
-    for seed_range in seed_ranges:
-        for mapping in mappings:
-            start, end = seed_range
-            index = bisect.bisect_right(mapping["sources"], start) - 1
-            source = mapping["sources"][index]
-            destination = mapping["destinations"][index]
-            mapped_ranges.add(
-                (destination + start - source, destination + end - source)
+        new_intervals = []
+        for interval in sub_intervals:
+            new_intervals += _split_seed_range_over_mapping(
+                mapping=mapping, seed_range=interval
             )
-    return list(mapped_ranges)
+            sub_intervals = new_intervals
+    mapped_ranges += sub_intervals
+    return mapped_ranges
 
 
-def _split_seed_ranges(
-    mapping: dict[str, list[float]], seed_range: tuple[int, int]
-) -> list[tuple[int, int]]:
+def _map_range_on_interval(
+    mapping: dict[str, list[float]], seed_range: tuple[float, float]
+) -> tuple[float, float]:
     start, end = seed_range
+    index = bisect.bisect_right(mapping["sources"], start) - 1
+    source = mapping["sources"][index]
+    destination = mapping["destinations"][index]
+    return destination + start - source, destination + end - source
+
+
+def _split_seed_range_over_mapping(
+    mapping: dict[str, list[float]], seed_range: tuple[float, float]
+) -> list[tuple[float, float]]:
+    start, end = seed_range
+    end = end - 1
     start_index = bisect.bisect_right(mapping["sources"], start) - 1
     end_index = bisect.bisect_right(mapping["sources"], end) - 1
     if start_index == end_index:
-        return [seed_range]
+        return [_map_range_on_interval(mapping=mapping, seed_range=seed_range)]
     else:
-        number_of_chunks = end_index - start_index
-        start_index = bisect.bisect_right(mapping["sources"], start) - 1
-        next_source = mapping["sources"][start_index + 1]
-        first_interval = (start, next_source - 1)
-        print(f"{number_of_chunks=}")
-        return [seed_range]
+        # make intervals:
+        sources_between = [
+            mapping["sources"][i + 1] for i in range(start_index, end_index)
+        ]
+        sources_between.append(start)
+        sources_between.append(end)
+        new_intervals = zip(sorted(sources_between)[:-1], sorted(sources_between)[1:])
+        return [
+            _map_range_on_interval(mapping=mapping, seed_range=interval)
+            for interval in new_intervals
+        ]
 
 
 def _get_seed_ranges_and_mappings(file: os.path):
