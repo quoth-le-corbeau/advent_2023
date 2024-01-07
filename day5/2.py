@@ -22,7 +22,6 @@ def find_min_seed_location(file_path: os.path) -> int:
         mapped_seed_ranges += _trace_range_through_mappings(
             seed_range=seed_range, mappings=mappings
         )
-    print(mapped_seed_ranges)
     return min([mapped_seed_range[0] for mapped_seed_range in mapped_seed_ranges])
 
 
