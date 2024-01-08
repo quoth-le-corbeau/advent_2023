@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from collections import defaultdict
 import helpers
 
-CARD_ORDER = "2 3 4 5 6 7 8 9 T J Q K A"
+CARD_ORDER = "J 2 3 4 5 6 7 8 9 T Q K A"
 
 
 @dataclass()
