@@ -1,3 +1,4 @@
+import dataclasses
 import os
 from dataclasses import dataclass
 from collections import defaultdict
@@ -13,10 +14,13 @@ class BidHand:
 
     def __lt__(self, other):
         i = 0
-        while CARD_ORDER.split().index(self.hand[i]) == CARD_ORDER.split().index(
-            other.hand[i]
-        ):
+        assert len(self.hand) == 5
+        while i < 5 and CARD_ORDER.split().index(
+            self.hand[i]
+        ) == CARD_ORDER.split().index(other.hand[i]):
             i += 1
+        if i == 5:
+            return False
         if CARD_ORDER.split().index(self.hand[i]) < CARD_ORDER.split().index(
             other.hand[i]
         ):
@@ -51,6 +55,35 @@ class BidHand:
             counts.append(self.hand.count(char))
         return counts
 
+    def get_type_with_jokers(self) -> str:
+        trimmed_hand = self._remove_jokers(hand=self.hand)
+        if len(trimmed_hand) == 0:
+            return "JJJJJ"
+        modal_card_in_trimmed = self._get_modal_card(hand=trimmed_hand)
+        new_hand = ""
+        for char in self.hand:
+            if char != "J":
+                new_hand += char
+            else:
+                new_hand += modal_card_in_trimmed
+        return new_hand
+
+    @staticmethod
+    def _get_modal_card(hand: str) -> str:
+        counts = list()
+        for char in hand:
+            counts.append((hand.count(char), char))
+        highest_count = max(counts)
+        return highest_count[1]
+
+    @staticmethod
+    def _remove_jokers(hand: str) -> str:
+        trimmed_hand = ""
+        for char in hand:
+            if char != "J":
+                trimmed_hand += char
+        return trimmed_hand
+
 
 def find_total_camel_card_winnings(file_path: os.path):
     bid_hands = _get_bid_hands(file=file_path)
@@ -74,7 +107,12 @@ def _get_sorted_bid_hands_by_type(
 ) -> dict[int, list[BidHand]]:
     hands_by_type = defaultdict(list)
     for bid_hand in bid_hands:
-        hands_by_type[bid_hand.get_type()].append(bid_hand)
+        original_hand = bid_hand.hand
+        new_hand = bid_hand.get_type_with_jokers()
+        bid_hand = dataclasses.replace(bid_hand, hand=new_hand)
+        type = bid_hand.get_type()
+        bid_hand = dataclasses.replace(bid_hand, hand=original_hand)
+        hands_by_type[type].append(bid_hand)
     sorted_hands_by_type = dict(sorted(hands_by_type.items()))
     for key, value in sorted_hands_by_type.items():
         sorted_hands_by_type[key] = sorted(value)
