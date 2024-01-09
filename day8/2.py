@@ -1,27 +1,31 @@
+import math
 import os
 import helpers
 
 
-def count_moves_to_navigate_wasteland(file_path: os.path) -> int:
+def count_ghost_moves_to_navigate_wasteland(file_path: os.path) -> int:
     directional_instructions, network_look_up = _parse_instructions(file=file_path)
     number_of_directional_instructions = len(directional_instructions)
-    current_strings = list()
-    for key, _ in network_look_up.items():
-        if key.endswith("A"):
-            current_strings.append(key)
-    i = 0
-    while not all([current_string.endswith("Z") for current_string in current_strings]):
-        if i >= number_of_directional_instructions:
-            direction = directional_instructions[i % number_of_directional_instructions]
-        else:
-            direction = directional_instructions[i]
-        direction = int(direction)
-        current_strings = [
-            network_look_up[current_string][direction]
-            for current_string in current_strings
-        ]
-        i += 1
-    return i
+    start_positions = [key for key in network_look_up if key.endswith("A")]
+    distances_to_zs = []
+    for string in start_positions:
+        i = 0
+        distances_to_z = []
+        while not string.endswith("Z"):
+            if i >= number_of_directional_instructions:
+                direction = directional_instructions[
+                    i % number_of_directional_instructions
+                ]
+            else:
+                direction = directional_instructions[i]
+            string = network_look_up[string][int(direction)]
+            i += 1
+        distances_to_z.append(i)
+        distances_to_zs += distances_to_z
+    lcm = 1
+    for number in distances_to_zs:
+        lcm = lcm * number // math.gcd(lcm, number)
+    return lcm
 
 
 def _parse_instructions(file: os.path) -> tuple[str, dict[str, tuple[str, str]]]:
@@ -41,5 +45,5 @@ def _parse_instructions(file: os.path) -> tuple[str, dict[str, tuple[str, str]]]
 
 
 helpers.print_timed_results(
-    solution_func=count_moves_to_navigate_wasteland, test_path_extension="eg2.txt"
+    solution_func=count_ghost_moves_to_navigate_wasteland, test_path_extension="eg2.txt"
 )
