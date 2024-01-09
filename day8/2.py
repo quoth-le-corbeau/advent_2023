@@ -1,21 +1,25 @@
 import os
-import re
 import helpers
 
 
 def count_moves_to_navigate_wasteland(file_path: os.path) -> int:
     directional_instructions, network_look_up = _parse_instructions(file=file_path)
-    current_string_pattern = r"*\A$"
-    final_string_pattern = r"*\Z$"
     number_of_directional_instructions = len(directional_instructions)
+    current_strings = list()
+    for key, _ in network_look_up.items():
+        if key.endswith("A"):
+            current_strings.append(key)
     i = 0
-    while current_string != final_string:
+    while not all([current_string.endswith("Z") for current_string in current_strings]):
         if i >= number_of_directional_instructions:
             direction = directional_instructions[i % number_of_directional_instructions]
         else:
             direction = directional_instructions[i]
         direction = int(direction)
-        current_string = network_look_up[current_string][direction]
+        current_strings = [
+            network_look_up[current_string][direction]
+            for current_string in current_strings
+        ]
         i += 1
     return i
 
