@@ -14,7 +14,6 @@ class SeriesWithAllDifference:
 
 def sum_next_terms_in_series(file_path: os.path) -> int:
     all_series = _get_all_series_from_input(file=file_path)
-    print(f"{all_series=}")
     series_with_ordered_differences = _get_ordered_difference_series(
         all_series=all_series
     )
@@ -27,7 +26,6 @@ def sum_next_terms_in_series(file_path: os.path) -> int:
 def _get_all_next_terms_in_series(
     series_with_ordered_differences: list[SeriesWithAllDifference],
 ) -> list[int]:
-    """Problem seems to be here"""
     next_terms_in_series = list()
     for series_with_ordered_differences in series_with_ordered_differences:
         step_to_next_term = 0
@@ -37,7 +35,6 @@ def _get_all_next_terms_in_series(
         next_term_in_series = (
             series_with_ordered_differences.series[-1] + step_to_next_term
         )
-        # series.series.append(next_term_in_series)
         next_terms_in_series.append(next_term_in_series)
     return next_terms_in_series
 

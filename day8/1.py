@@ -38,5 +38,5 @@ def _parse_instructions(file: os.path) -> tuple[str, dict[str, tuple[str, str]]]
 
 helpers.print_timed_results(solution_func=count_moves_to_navigate_wasteland)
 helpers.print_timed_results(
-    solution_func=count_moves_to_navigate_wasteland, test_path_extension="eg1.txt"
+    solution_func=count_moves_to_navigate_wasteland, test_path_extension="eg2.txt"
 )
