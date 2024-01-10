@@ -14,13 +14,13 @@ class SeriesWithAllDifference:
 
 def sum_next_terms_in_series(file_path: os.path) -> int:
     all_series = _get_all_series_from_input(file=file_path)
+    print(f"{all_series=}")
     series_with_ordered_differences = _get_ordered_difference_series(
         all_series=all_series
     )
     next_terms_in_series = _get_all_next_terms_in_series(
         series_with_ordered_differences=series_with_ordered_differences
     )
-    print(f"{next_terms_in_series=}")
     return sum(next_terms_in_series)
 
 
@@ -29,12 +29,14 @@ def _get_all_next_terms_in_series(
 ) -> list[int]:
     """Problem seems to be here"""
     next_terms_in_series = list()
-    for series in series_with_ordered_differences:
+    for series_with_ordered_differences in series_with_ordered_differences:
         step_to_next_term = 0
-        for difference_series in series.all_difference:
+        for difference_series in series_with_ordered_differences.all_difference:
             difference_series.append(difference_series[-1] + step_to_next_term)
             step_to_next_term = difference_series[-1]
-        next_term_in_series = series.series[-1] + step_to_next_term
+        next_term_in_series = (
+            series_with_ordered_differences.series[-1] + step_to_next_term
+        )
         # series.series.append(next_term_in_series)
         next_terms_in_series.append(next_term_in_series)
     return next_terms_in_series
@@ -79,7 +81,7 @@ def _get_all_series_from_input(file: os.path) -> list[list[int]]:
         lines = puzzle_input.read().strip().splitlines()
         all_series = list()
         for line in lines:
-            series = list(map(int, re.findall(f"\d+", line)))
+            series = list(map(int, re.findall(r"\d+|-\d+", line)))
             all_series.append(series)
         return all_series
 
