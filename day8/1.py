@@ -1,10 +1,9 @@
-import os
+import time
+import pathlib
 
-import helpers
 
-
-def count_moves_to_navigate_wasteland(file_path: os.path) -> int:
-    directional_instructions, network_look_up = _parse_instructions(file=file_path)
+def count_moves_to_navigate_wasteland(file: str) -> int:
+    directional_instructions, network_look_up = _parse_instructions(file=file)
     current_string = "AAA"
     final_string = "ZZZ"
     number_of_directional_instructions = len(directional_instructions)
@@ -20,8 +19,8 @@ def count_moves_to_navigate_wasteland(file_path: os.path) -> int:
     return i
 
 
-def _parse_instructions(file: os.path) -> tuple[str, dict[str, tuple[str, str]]]:
-    with open(file) as puzzle_input:
+def _parse_instructions(file: str) -> tuple[str, dict[str, tuple[str, str]]]:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         directional_instructions = puzzle_input.readline()
         network_look_up = dict()
         for line in puzzle_input.readlines()[1:]:
@@ -36,7 +35,12 @@ def _parse_instructions(file: os.path) -> tuple[str, dict[str, tuple[str, str]]]
     return directional_instructions.strip(), network_look_up
 
 
-helpers.print_timed_results(solution_func=count_moves_to_navigate_wasteland)
-helpers.print_timed_results(
-    solution_func=count_moves_to_navigate_wasteland, test_path_extension="eg2.txt"
-)
+start = time.perf_counter()
+print(count_moves_to_navigate_wasteland("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(count_moves_to_navigate_wasteland("eg1.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(count_moves_to_navigate_wasteland("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

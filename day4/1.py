@@ -1,15 +1,14 @@
-import os
+import time
 import re
-
-import helpers
-
-
-def get_scratchcard_points(file_path: os.path):
-    return _get_scratchcard_points(file=file_path)
+import pathlib
 
 
-def _get_scratchcard_points(file: os.path) -> int:
-    with open(file) as puzzle_input:
+def get_scratchcard_points(file: str) -> int:
+    return _get_scratchcard_points(file=file)
+
+
+def _get_scratchcard_points(file: str) -> int:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         cards = puzzle_input.readlines()
         score = 0
         for card in cards:
@@ -22,4 +21,9 @@ def _get_scratchcard_points(file: os.path) -> int:
         return score
 
 
-helpers.print_timed_results(solution_func=get_scratchcard_points)
+start = time.perf_counter()
+print(get_scratchcard_points("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(get_scratchcard_points("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

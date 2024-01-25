@@ -1,18 +1,18 @@
-import os
+import time
+import pathlib
 import re
-import helpers
 
 
-def get_total_scratchcards(file_path: os.path):
-    all_cards_won = _get_scratchcard_copies(file=file_path)
+def count_scratch_cards_and_copies(file: str) -> int:
+    all_cards_won = _get_scratchcard_copies(file=file)
     total = 0
     for card, copies in all_cards_won.items():
         total += copies
     return total
 
 
-def _get_scratchcard_copies(file: os.path):
-    with open(file) as puzzle_input:
+def _get_scratchcard_copies(file: str):
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         cards = puzzle_input.readlines()
         card_copies = {i + 1: 1 for i in range(len(cards))}
         for index, card in enumerate(cards):
@@ -27,4 +27,9 @@ def _get_scratchcard_copies(file: os.path):
         return card_copies
 
 
-helpers.print_timed_results(solution_func=get_total_scratchcards)
+start = time.perf_counter()
+print(count_scratch_cards_and_copies("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(count_scratch_cards_and_copies("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

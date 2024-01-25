@@ -1,14 +1,13 @@
-import os
-
-import helpers
-
-
-def get_all_gear_ratios(file_path: os.path):
-    return sum(_get_gear_ratios(file=file_path))
+import time
+import pathlib
 
 
-def _get_gear_ratios(file: os.path) -> list[int]:
-    with open(file) as puzzle_input:
+def sum_gear_ratios(file: str) -> int:
+    return sum(_get_gear_ratios(file=file))
+
+
+def _get_gear_ratios(file: str) -> list[int]:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         grid = puzzle_input.readlines()
         gear_ratios = list()
         for row_index, row in enumerate(grid):
@@ -60,4 +59,9 @@ def _get_part_numbers_by_coordinates(
     return part_numbers
 
 
-helpers.print_timed_results(solution_func=get_all_gear_ratios)
+start = time.perf_counter()
+print(sum_gear_ratios("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(sum_gear_ratios("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

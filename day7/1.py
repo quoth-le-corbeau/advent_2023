@@ -1,7 +1,8 @@
-import os
+import time
+import pathlib
 from dataclasses import dataclass
 from collections import defaultdict
-import helpers
+
 
 CARD_ORDER = "2 3 4 5 6 7 8 9 T J Q K A"
 
@@ -52,8 +53,8 @@ class BidHand:
         return counts
 
 
-def find_total_camel_card_winnings(file_path: os.path):
-    bid_hands = _get_bid_hands(file=file_path)
+def find_total_camel_card_winnings(file: str) -> int:
+    bid_hands = _get_bid_hands(file=file)
     sorted_bid_hands_by_type = _get_sorted_bid_hands_by_type(bid_hands=bid_hands)
     return _get_total_winnings(sorted_bid_hands_by_type=sorted_bid_hands_by_type)
 
@@ -81,8 +82,8 @@ def _get_sorted_bid_hands_by_type(
     return sorted_hands_by_type
 
 
-def _get_bid_hands(file: os.path) -> list[BidHand]:
-    with open(file) as puzzle_input:
+def _get_bid_hands(file: str) -> list[BidHand]:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         hands_with_rank = puzzle_input.readlines()
         bid_hands: list[BidHand] = list()
         for hand_with_rank in hands_with_rank:
@@ -92,4 +93,9 @@ def _get_bid_hands(file: os.path) -> list[BidHand]:
     return bid_hands
 
 
-helpers.print_timed_results(solution_func=find_total_camel_card_winnings)
+start = time.perf_counter()
+print(find_total_camel_card_winnings("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(find_total_camel_card_winnings("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

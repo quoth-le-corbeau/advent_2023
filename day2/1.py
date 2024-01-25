@@ -1,16 +1,15 @@
-import os
 import re
+import pathlib
+import time
 
-import helpers
 
-
-def get_possible_games(file_path: os.path):
-    possible_games = _get_possible_games(file=file_path)
+def get_possible_games(file: str) -> int:
+    possible_games = _get_possible_games(file=file)
     return sum(possible_games)
 
 
-def _get_possible_games(file: os.path):
-    with open(file) as puzzle_input:
+def _get_possible_games(file: str):
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         lines = puzzle_input.readlines()
         possible = []
         for line in lines:
@@ -39,4 +38,9 @@ def _is_game_impossible(cubes_by_colour: list[str], max_for_colour: int):
     return any(int(entry.split()[0]) > max_for_colour for entry in cubes_by_colour)
 
 
-helpers.print_timed_results(solution_func=get_possible_games)
+start = time.perf_counter()
+print(get_possible_games("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(get_possible_games("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

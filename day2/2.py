@@ -1,16 +1,15 @@
-import os
+import time
 import re
+import pathlib
 
-import helpers
 
-
-def get_minimum_cube_powers(file_path: os.path):
-    powers = _get_powers(file=file_path)
+def get_minimum_cube_powers(file: str) -> int:
+    powers = _get_powers(file=file)
     return sum(powers)
 
 
-def _get_powers(file: os.path):
-    with open(file) as puzzle_input:
+def _get_powers(file: str):
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         lines = puzzle_input.readlines()
         powers = []
         for line in lines:
@@ -29,4 +28,9 @@ def _find_highest_for_colour(cubes_by_colour: list[str]) -> int:
     return max([int(entry.split()[0]) for entry in cubes_by_colour])
 
 
-helpers.print_timed_results(solution_func=get_minimum_cube_powers)
+start = time.perf_counter()
+print(get_minimum_cube_powers("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(get_minimum_cube_powers("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

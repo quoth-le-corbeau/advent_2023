@@ -1,8 +1,8 @@
+import time
+import pathlib
 import bisect
 import math
-import os
 from dataclasses import dataclass
-import helpers
 
 
 @dataclass(frozen=True)
@@ -15,8 +15,8 @@ class MappingGuide:
         return self.source < other.source
 
 
-def find_min_seed_location(file_path: os.path) -> int:
-    seed_ranges, mappings = _get_seed_ranges_and_mappings(file=file_path)
+def find_min_seed_range_location(file: str) -> int:
+    seed_ranges, mappings = _get_seed_ranges_and_mappings(file=file)
     mapped_seed_ranges = []
     for seed_range in seed_ranges:
         mapped_seed_ranges += _trace_range_through_mappings(
@@ -74,8 +74,8 @@ def _split_seed_range_over_mapping(
         ]
 
 
-def _get_seed_ranges_and_mappings(file: os.path):
-    with open(file) as puzzle_input:
+def _get_seed_ranges_and_mappings(file: str):
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         seeds, *blocks = puzzle_input.read().split("\n\n")
         seeds = list(map(int, seeds.split(":")[1].strip().split()))
         seed_ranges = [
@@ -124,4 +124,9 @@ def _make_full_mapping(
     return mapping
 
 
-helpers.print_timed_results(solution_func=find_min_seed_location)
+start = time.perf_counter()
+print(find_min_seed_range_location("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(find_min_seed_range_location("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

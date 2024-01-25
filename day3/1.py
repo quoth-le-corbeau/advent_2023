@@ -1,14 +1,13 @@
-import os
-
-import helpers
-
-
-def find_part_numbers(file_path: os.path):
-    return sum(_get_all_part_numbers(file=file_path))
+import time
+import pathlib
 
 
-def _get_all_part_numbers(file: os.path) -> list[int]:
-    with open(file) as puzzle_input:
+def sum_part_numbers(file: str) -> int:
+    return sum(_get_all_part_numbers(file=file))
+
+
+def _get_all_part_numbers(file: str) -> list[int]:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         grid = puzzle_input.readlines()
         part_number_start_coordinates: set[tuple] = set()
         for row_index, row in enumerate(grid):
@@ -32,15 +31,27 @@ def _get_all_part_numbers(file: os.path) -> list[int]:
                                 part_number_start_coordinates.add(
                                     (vertical_index, i + 1)
                                 )
-        all_part_numbers = list()
-        for coordinate in part_number_start_coordinates:
-            row, column = coordinate
-            part_number_string = ""
-            while grid[row][column].isdigit():
-                part_number_string += grid[row][column]
-                column += 1
-            all_part_numbers.append(int(part_number_string))
+        all_part_numbers = parse_part_numbers(grid, part_number_start_coordinates)
         return all_part_numbers
 
 
-helpers.print_timed_results(solution_func=find_part_numbers)
+def parse_part_numbers(
+    grid: list[str], part_number_start_coordinates: set[tuple[int, int]]
+) -> list[int]:
+    all_part_numbers = list()
+    for coordinate in part_number_start_coordinates:
+        row, column = coordinate
+        part_number_string = ""
+        while grid[row][column].isdigit():
+            part_number_string += grid[row][column]
+            column += 1
+        all_part_numbers.append(int(part_number_string))
+    return all_part_numbers
+
+
+start = time.perf_counter()
+print(sum_part_numbers("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(sum_part_numbers("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")

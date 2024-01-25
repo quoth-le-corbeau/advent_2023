@@ -1,11 +1,11 @@
+import time
+import pathlib
 import functools
 import math
-import os
-import helpers
 
 
-def find_winners_product(file_path: os.path):
-    games = _parse_games(file=file_path)
+def find_winners_product(file: str):
+    games = _parse_games(file=file)
     ways_to_win = list()
     for game in games:
         ways_to_win.append(_find_winning_combinations(game=game))
@@ -20,8 +20,8 @@ def _find_winning_combinations(game: tuple[int, int]) -> int:
     return upper_root - lower_root - 1
 
 
-def _parse_games(file: os.path) -> list[tuple[int, int]]:
-    with open(file) as puzzle_input:
+def _parse_games(file: str) -> list[tuple[int, int]]:
+    with open(pathlib.Path(__file__).parent / file, "r") as puzzle_input:
         time_line = puzzle_input.readline()
         times = list(map(int, time_line.split(":")[1].strip().split()))
         distance_line = puzzle_input.readline()
@@ -29,4 +29,9 @@ def _parse_games(file: os.path) -> list[tuple[int, int]]:
         return list(zip(times, distances))
 
 
-helpers.print_timed_results(solution_func=find_winners_product)
+start = time.perf_counter()
+print(find_winners_product("eg.txt"))
+print(f"TEST -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
+start = time.perf_counter()
+print(find_winners_product("input.txt"))
+print(f"REAL -> Elapsed {time.perf_counter() - start:2.4f} seconds.")
